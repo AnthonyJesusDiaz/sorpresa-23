@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;500;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            color: #4a4a4a;
+        }
+
+        /* --- ESTILOS DE LA CUENTA REGRESIVA (INTRO) --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2b32b2 0%, #1488cc 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            text-align: center;
+            transition: opacity 1s ease-out;
+        }
+
+        .intro-title { font-family: 'Dancing Script', cursive; font-size: 3rem; margin-bottom: 2rem; }
+        .countdown-grid { display: flex; gap: 15px; }
+        .count-box { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; min-width: 70px; backdrop-filter: blur(5px); }
+        .count-box span { font-size: 2.5rem; font-weight: 700; display: block; }
+        .count-box label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- ESTILOS DEL CONTENIDO PRINCIPAL --- */
+        #main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease-in;
+            width: 100%;
+            display: flex; 
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(233, 30, 99, 0.2);
+            max-width: 90%;
+            width: 400px;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #e91e63; margin-bottom: 0.5rem; line-height: 1.2; }
+
+        .counter { background: #fff0f5; padding: 1rem; border-radius: 15px; margin: 1.5rem 0; border: 1px solid #ffc1e3; }
+        .time-box-main { display: inline-block; margin: 0 5px; }
+        .time-box-main span { display: block; font-size: 1.3rem; color: #d81b60; font-weight: bold; }
+        .time-box-main label { font-size: 0.6rem; text-transform: uppercase; color: #888; }
+
+        .photo-frame {
+            width: 200px;
+            height: 200px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            border: 6px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .message { font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem; color: #555; }
+
+        .btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+            font-family: 'Dancing Script', cursive;
+        }
+        .btn:hover { transform: scale(1.05) translateY(-2px); background: #c2185b; }
+
+        /* --- ESTILOS DE LA VENTANA FINAL (POPUP) --- */
+        #modal-sorpresa {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 90%;
+            width: 350px;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #aaa;
+            line-height: 0.8;
+        }
+
+        .img-final {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .frase-final {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #e91e63;
+            margin: 0;
+        }
+
+        /* Utilidades */
+        .hearts-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .heart { position: absolute; bottom: -100px; font-size: 2rem; color: rgba(233, 30, 99, 0.4); animation: float 6s linear infinite; }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="intro-title">Esperando el momento...</div>
+        <div class="countdown-grid">
+            <div class="count-box"><span id="cd-hours">00</span><label>Horas</label></div>
+            <div class="count-box"><span id="cd-minutes">00</span><label>Min</label></div>
+            <div class="count-box"><span id="cd-seconds">00</span><label>Seg</label></div>
+        </div>
+        <p style="margin-top: 20px; opacity: 0.8;">2 de Febrero - 00:00 AM</p>
+    </div>
+
+    <div class="hearts-bg" id="hearts-container"></div>
+
+    <div id="main-content" class="hidden">
+        <div class="container">
+            <div class="photo-frame">
+                <img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Nosotros">
+            </div>
+
+            <h1>¡Felices 23 Meses!</h1>
+            
+            <div class="message">
+                Amor mío, ya son 23 meses escribiendo esta historia.<br>
+                Gracias por ser mi persona favorita.<br>
+                ¡Vamos por más!
+            </div>
+
+            <div class="counter" id="timer">Calculando...</div>
+
+            <button class="btn" onclick="abrirSorpresa()">Presióname ❤️</button>
+        </div>
+    </div>
+
+    <div id="modal-sorpresa" class="hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarSorpresa()">&times;</span>
+            
+            <img src="c:\VisualCode\proyectos libres\juntos.jpg" class="img-final" alt="Juntos">
+            
+            <p class="frase-final">
+                "Eres mi casualidad favorita y mi destino más bonito. Te amo hoy y siempre." ❤️
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ================= CONFIGURACIÓN DE FECHAS =================
+        
+        // 1. CUÁNDO SE ABRE LA PÁGINA: 2 de Febrero de 2026 a medianoche
+        // (Mes 1 = Febrero)
+        const fechaApertura = new Date(2026, 1, 2, 0, 0, 0);
+
+        // 2. CUÁNDO EMPEZARON DE NOVIOS: 2 de Marzo de 2024
+        // (Mes 2 = Marzo)
+        const fechaInicioNovios = new Date(2024, 2, 2); 
+
+        // ==========================================================
+
+        function manejarTiempo() {
+            const ahora = new Date();
+            const introScreen = document.getElementById('intro-screen');
+            const mainContent = document.getElementById('main-content');
+            const distanciaApertura = fechaApertura - ahora;
+
+            if (distanciaApertura > 0) {
+                // CUENTA REGRESIVA
+                const horas = Math.floor((distanciaApertura % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((distanciaApertura % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((distanciaApertura % (1000 * 60)) / 1000);
+                document.getElementById('cd-hours').innerText = horas < 10 ? '0' + horas : horas;
+                document.getElementById('cd-minutes').innerText = minutos < 10 ? '0' + minutos : minutos;
+                document.getElementById('cd-seconds').innerText = segundos < 10 ? '0' + segundos : segundos;
+            } else {
+                // HORA LLEGADA
+                if (!introScreen.classList.contains('hidden')) {
+                    introScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        introScreen.classList.add('hidden');
+                        mainContent.classList.remove('hidden');
+                        setTimeout(() => { mainContent.style.opacity = '1'; }, 100);
+                    }, 1000);
+                }
+                actualizarContadorNovios();
+            }
+        }
+
+        function actualizarContadorNovios() {
+            const ahora = new Date();
+            const diferencia = ahora - fechaInicioNovios;
+            const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+            document.getElementById('timer').innerHTML = `
+                <div class="time-box-main"><span>${dias}</span><label>Días</label></div>
+                <div class="time-box-main"><span>${horas}</span><label>Hrs</label></div>
+                <div class="time-box-main"><span>${minutos}</span><label>Min</label></div>
+                <div class="time-box-main"><span>${segundos}</span><label>Seg</label></div>
+            `;
+        }
+
+        // Funciones para la ventana sorpresa
+        function abrirSorpresa() {
+            document.getElementById('modal-sorpresa').classList.remove('hidden');
+        }
+        function cerrarSorpresa() {
+            document.getElementById('modal-sorpresa').classList.add('hidden');
+        }
+
+        // Corazones
+        function crearCorazones() {
+            const container = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+            container.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+
+        setInterval(manejarTiempo, 1000);
+        manejarTiempo();
+        setInterval(crearCorazones, 400);
+    </script>
+</body>
+</html>
